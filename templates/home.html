@@ -1,0 +1,138 @@
+
+{% extends '_base.html' %}
+{% load static %}
+{% block head %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/home.css' %}">
+{% endblock %}
+{% block content %}
+<div class="container">
+    <br/>
+    <div class="row">
+        <div class="col-md-12">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <a class="navbar-brand" href="#">Navbar</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                  <ul class="navbar-nav">
+                    <li class="nav-item active">
+                      <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" href="#">Features</a>
+                    </li>
+                    <li class="nav-item">
+                        <button id="card" data-html="true" type="button" class="btn btn-secondary" data-container="body" data-toggle="popover" data-placement="bottom" data-content="">
+                        Card(0)
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link disabled" href="#">Disabled</a>
+                    </li>
+                  </ul>
+                </div>
+              </nav>
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-md-12">
+            <form class="card card-sm" method="get">
+                <div class="card-body row no-gutters align-items-center">
+                    <div class="col">
+                        <input type="search" name="item_name" placeholder="Search" class="form-control form-control-borderless">
+                    </div>
+                    &nbsp;
+                    <div class="col-auto">
+                        <button class="btn btn-success" type="submit">Search</button>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        {% for product in products %}
+        <div class="col-md-3">
+            <div class="card">
+                <img src="{{product.image.url}}" class="card-img-top">
+                <div class="card-body">
+                    <div id="nm{{product.id}}" class="card-title">{{product.title}}</div>
+                    <div class="card-text">
+                       $ {{product.price}}
+                    </div>
+                    <a href="{% url 'detail' product.id %}" class="btn btn-warning">View</a>
+                    <a class="btn btn-warning atc" id="{{product.id}}">Add to card</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <br/>
+    
+    <div class="row">
+        <div class="col-md-3 offset-md-4">
+            <ul class="pagination">
+                {% if page_obj.has_previous %}
+                <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">previous</a>
+                </li>&nbsp;
+                {% endif %}
+                <li class="page-item active">
+                <a class="page-link" href="#">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</a>
+                </li>  &nbsp;
+                {% if page_obj.has_next %}
+                <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}">next</a>&nbsp;
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block script %}
+<script type="text/javascript">
+    console.log('Java Script is working!')
+    if (localStorage.getItem('card')==null){
+        var card = {};
+    } 
+    else{
+        card = JSON.parse(localStorage.getItem('card'));
+    }
+    $(document).on('click','.atc',function(){
+        console.log('the add to card button clicked');
+        var item_id = this.id;
+        if (card[item_id]!= undefined){
+            quantity = card[item_id][0] + 1;
+            card[item_id][0] = quantity;
+        }
+        else{
+            quantity = 1;
+            name = document.getElementById('nm'+item_id).innerHTML;
+            card[item_id]= [quantity,name];
+        }
+        localStorage.setItem('card',JSON.stringify(card));
+        document.getElementById('card').innerHTML = "Card("+ Object.keys(card).length +")";
+   
+    });
+
+    DisplayCard(card);
+    function DisplayCard(card) {
+      var cardString = "<h6>This is your items:</h6>";
+      var cardIndex = 1;
+      for (var x in card){
+        cardString += cardIndex+") ";
+        cardString += document.getElementById('nm'+x).innerHTML + ": " + card[x][0] + "<br/>";
+        cardIndex += 1;  
+      }
+      cardString += "<a href='/checkout' class='btn btn-warning'>Check</a>";
+      document.getElementById("card").setAttribute('data-content',cardString);
+        $('[data-toggle="popover"]').popover()
+     
+    }
+
+</script>
+{% endblock %}

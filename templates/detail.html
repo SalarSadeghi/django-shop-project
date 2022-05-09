@@ -1,0 +1,45 @@
+{% extends '_base.html' %}
+{% load static %}
+{% block head %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/detail.css' %}">
+{% endblock %}
+{% block content %}
+<div class="container">
+    <br/>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="row">
+                <div class="col-mod-12">
+                    <img class="myimage" src="{{product.image.url}}">
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-mod-12">
+                            {{product.title}}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-mod-12">
+                            {{product.description}}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-mod-12">
+                            {{product.price}}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-mod-12">
+                            {{product.iscount_price}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
